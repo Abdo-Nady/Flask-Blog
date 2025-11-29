@@ -1,59 +1,407 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="posts-container">
+    <div class="posts-header">
+        <div class="header-content">
+            <div class="title-section">
+                <div class="title-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <div>
+                    <h1>Posts</h1>
+                    <p class="posts-subtitle">Explore content from our community</p>
+                </div>
+            </div>
 
-<div class="container py-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Posts</h2>
-
-        {% if session.get('username') %}
-        <a href="{{ url_for('create_post') }}" class="btn btn-primary">
-            + Create Post
-        </a>
-        {% endif %}
+            {% if session.get('username') %}
+            <a href="{{ url_for('create_post') }}" class="btn-create">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Create Post</span>
+            </a>
+            {% endif %}
+        </div>
     </div>
 
-    <!-- grid -->
-    <div class="row g-4">
+    <div class="posts-grid">
         {% for post in posts %}
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm">
-
-                {% if post.image %}
-                <img src="{{ post.image }}" class="card-img-top" alt="{{ post.title }}"
-                    style="height:200px; object-fit:cover;">
+        <div class="post-card">
+            <div class="post-image-container">
+                {% if post.image_url %}
+                <img src="{{ post.image_url }}" class="post-image" alt="{{ post.title }}">
                 {% else %}
-                <svg class="bd-placeholder-img card-img-top" width="100%" height="200"
-                    xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid slice"
-                    focusable="false">
-                    <rect width="100%" height="100%" fill="#e9ecef"></rect>
-                    <text x="50%" y="50%" fill="#6c757d" dy=".3em" text-anchor="middle">No Image</text>
-                </svg>
-                {% endif %}
-
-                <div class="card-body d-flex flex-column">
-
-                    <h5 class="card-title mb-2">{{ post.title }}</h5>
-
-                    <p class="card-text text-muted mb-3">
-                        Written by: <strong>{{ post.author.username }}</strong>
-                    </p>
-
-                    <div class="mt-auto">
-                        {#
-                        <a href="{{ url_for('post_detail', id=post.id) }}" class="btn btn-outline-primary btn-sm w-100">
-                            View Post
-                        </a>
-                        #}
-                    </div>
-
+                <div class="post-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    <span>No Image</span>
                 </div>
+                {% endif %}
+                <div class="post-overlay"></div>
+            </div>
+
+            <div class="post-content">
+                <h3 class="post-title">{{ post.title }}</h3>
+
+                <div class="post-author">
+                    <div class="author-avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <span class="author-name">{{ post.author.username }}</span>
+                </div>
+
+                <a href="{{ url_for('view_post', post_id=post.id) }}" class="btn-view">
+                    <span>View Post</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
             </div>
         </div>
         {% endfor %}
     </div>
-
 </div>
 
+<style>
+    .posts-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .posts-header {
+        margin-bottom: 3rem;
+        animation: fadeInDown 0.6s ease;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        background: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .title-section {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .title-icon {
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .title-icon svg {
+        color: white;
+    }
+
+    .title-section h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .posts-subtitle {
+        color: #94a3b8;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .btn-create {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        white-space: nowrap;
+    }
+
+    .btn-create:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .posts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+        animation: fadeInUp 0.6s ease 0.2s both;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .post-card {
+        background: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.4s ease;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .post-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(102, 126, 234, 0.5);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .post-image-container {
+        position: relative;
+        width: 100%;
+        height: 240px;
+        overflow: hidden;
+        background: rgba(15, 23, 42, 0.8);
+    }
+
+    .post-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .post-card:hover .post-image {
+        transform: scale(1.08);
+    }
+
+    .post-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        color: #64748b;
+    }
+
+    .post-placeholder svg {
+        opacity: 0.5;
+    }
+
+    .post-placeholder span {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .post-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to top, rgba(15, 23, 42, 0.8) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .post-card:hover .post-overlay {
+        opacity: 1;
+    }
+
+    .post-content {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex: 1;
+    }
+
+    .post-title {
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: #f8fafc;
+        margin: 0;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .post-author {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .author-avatar {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+
+    .author-avatar svg {
+        color: white;
+    }
+
+    .author-name {
+        color: #cbd5e1;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .btn-view {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.5rem;
+        background: rgba(102, 126, 234, 0.15);
+        color: #667eea;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        margin-top: auto;
+    }
+
+    .btn-view:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateX(4px);
+        border-color: transparent;
+    }
+
+    .btn-view svg {
+        transition: transform 0.3s ease;
+    }
+
+    .btn-view:hover svg {
+        transform: translateX(4px);
+    }
+
+    @media (max-width: 768px) {
+        .posts-container {
+            padding: 1rem;
+        }
+
+        .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 1.5rem;
+        }
+
+        .title-section {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .title-section h1 {
+            font-size: 2rem;
+        }
+
+        .btn-create {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .posts-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .post-image-container {
+            height: 200px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .title-icon {
+            width: 48px;
+            height: 48px;
+        }
+
+        .title-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .title-section h1 {
+            font-size: 1.75rem;
+        }
+    }
+</style>
 {% endblock %}
