@@ -1,5 +1,5 @@
 #!/bin/sh
-while ! pgت_isready -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U flaskuser; do
+while ! pg_isready -h "$DATABASE_HOST" -p "$DATABASE_PORT" -U flaskuser; do
   echo "Waiting for Postgres..."
   sleep 2
 done
